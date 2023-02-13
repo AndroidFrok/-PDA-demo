@@ -1,0 +1,13 @@
+    var receiver;
+    var main;
+    main = plus.android.runtimeMainActivity();//获取activity
+    receiver = plus.android.implements('io.dcloud.android.content.BroadcastReceiver',{
+        onReceive : function(context,intent){//实现onReceiver回调函数
+        plus.android.importClass(intent);//通过intent实例引入intent类，方便以后的‘.’操作
+        console.log(intent.getStringExtra("data"));//获取条码内容
+    }});
+    var IntentFilter = plus.android.importClass('android.content.IntentFilter');
+    var Intent = plus.android.importClass('android.content.Intent');
+    var filter = new IntentFilter();
+    filter.addAction("com.rscja.android.DATA_RESULT");//监听条码广播
+    main.registerReceiver(receiver,filter);//注册监听

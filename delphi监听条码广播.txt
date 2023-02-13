@@ -1,0 +1,63 @@
+uses
+  Androidapi.JNIBridge,
+  Androidapi.JNI.Embarcadero,
+  Androidapi.JNI.GraphicsContentViewText;
+
+type
+  TMyReceiver = class(TJavaLocal, JFMXBroadcastReceiverListener)
+  public
+    constructor Create;
+    procedure onReceive(context: JContext; intent: JIntent); cdecl;
+  end;
+
+uses 
+  Androidapi.Helpers,
+  Androidapi.JNI.JavaTypes;
+
+{ TMyReceiver }
+
+constructor TMyReceiver.Create;
+begin
+  inherited;
+end;
+
+procedure TMyReceiver.onReceive(context: JContext; intent: JIntent);
+   barcoedata string;
+begin
+  Log.d('Broadcast Received = ' + JStringToString(intent.getAction));
+
+　barcoedata=JStringToString(intent.getStringExtra(StringToJString('data')); //intent_data就是条码内容
+　　　
+end;
+设置为在表单的OnCreate事件中接收通知，并在OnDestroy事件中释放通知。
+
+type
+  TForm1 = class(TForm)
+    procedure FormCreate(Sender: TObject);
+    procedure FormDestroy(Sender: TObject);
+  private
+    { private 宣言 }
+    FMyListener: TMyReceiver;
+    FBroadcastReceiver: JFMXBroadcastReceiver;
+  public
+    { public 宣言 }
+  end;
+
+procedure TForm1.FormCreate(Sender: TObject);
+var
+  Filter: JIntentFilter;
+begin
+  FMyListener := TMyReceiver.Create;
+  FBroadcastReceiver := TJFMXBroadcastReceiver.JavaClass.init(FMyListener);
+
+  Filter := TJIntentFilter.JavaClass.init;
+  Filter.addAction((StringToJString('com.rscja.android.DATA_RESULT'));//监听条码广播的Action
+  TAndroidHelper.context.getApplicationContext.registerReceiver
+    (FBroadcastReceiver, Filter);
+end;
+
+procedure TForm1.FormDestroy(Sender: TObject);
+begin
+  TAndroidHelper.context.getApplicationContext.unregisterReceiver
+    (FBroadcastReceiver);
+end;

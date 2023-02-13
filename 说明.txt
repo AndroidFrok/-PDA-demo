@@ -1,0 +1,14 @@
+1，目前扫描条码只有通过按键触发，按下按键会发送F12的键值，可以通过监听F12键判断是否触发扫描
+2，扫到的条码我们会在当前光标处显示出来，同时也发了一个广播，你们也可以通过这个广播获取条码
+IntentFilter S80BarCodeCheckFilter = new IntentFilter("com.rscja.android.DATA_RESULT");
+registerReceiver(m_S80BarCodeCheckReciever,S80BarCodeCheckFilter);
+
+ private BroadcastReceiver m_S80BarCodeCheckReciever = new  BroadcastReceiver () {
+
+@Override
+public void onReceive(Context context, Intent intent) {
+
+String intent_data=intent.getStringExtra("data"); //intent_data就是条码内容
+
+        	}
+    };
